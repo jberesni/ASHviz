@@ -1,0 +1,88 @@
+/u02/app/oracle/admin/STMAIL/udump/stmail1_ora_30387.trc
+Oracle Database 10g Enterprise Edition Release 10.2.0.1.0 - Production
+With the Partitioning, Real Application Clusters, OLAP and Data Mining options
+ORACLE_HOME = /u01/app/oracle/product/ocsdb10gR2
+System name:	Linux
+Node name:	rgmdbs305
+Release:	2.4.21-27.0.2.1.7.ELhugemem
+Version:	#1 SMP Mon May 16 16:27:47 PDT 2005
+Machine:	i686
+Instance name: STMAIL1
+Redo thread mounted by this instance: 1
+Oracle process number: 314
+Unix process pid: 30387, image: oracle@rgmdbs305 (TNS V1-V3)
+
+*** 2006-10-09 12:19:25.898
+*** SERVICE NAME:(SYS$USERS) 2006-10-09 12:19:25.897
+*** SESSION ID:(1594.13771) 2006-10-09 12:19:25.897
+<<<ACTIVE SESSION HISTORY - PROCESS TRACE DUMP HEADER BEGIN>>>
+DBID, INSTANCE_NUMBER, SAMPLE_ID, SAMPLE_TIME, SESSION_ID, SESSION_SERIAL#, USER_ID, SQL_ID, SQL_CHILD_NUMBER, SQL_PLAN_HASH_VALUE, SERVICE_HASH, SESSION_TYPE, SQL_OPCODE, BLOCKING_SESSION, BLOCKING_SESSION_SERIAL#, QC_SESSION_ID, QC_INSTANCE_ID, XID, CURRENT_OBJ#, CURRENT_FILE#, CURRENT_BLOCK#, EVENT_ID, SEQ#, P1, P2, P3, WAIT_TIME, TIME_WAITED, FORCE_MATCHING_SIGNATURE, PROGRAM, MODULE, ACTION, CLIENT_ID
+<<<ACTIVE SESSION HISTORY - PROCESS TRACE DUMP HEADER END>>>
+<<<ACTIVE SESSION HISTORY - PROCESS TRACE DUMP BEGIN>>>
+***************************************************************************************
+/u02/app/oracle/admin/STMAIL/udump/stmail2_ora_16803.trc
+Oracle Database 10g Enterprise Edition Release 10.2.0.1.0 - Production
+With the Partitioning, Real Application Clusters, OLAP and Data Mining options
+ORACLE_HOME = /u01/app/oracle/product/ocsdb10gR2
+System name:	Linux
+Node name:	rgmdbs306
+Release:	2.4.21-27.0.2.1.7.ELhugemem
+Version:	#1 SMP Mon May 16 16:27:47 PDT 2005
+Machine:	i686
+Instance name: STMAIL2
+Redo thread mounted by this instance: 2
+Oracle process number: 459
+Unix process pid: 16803, image: oracle@rgmdbs306 (TNS V1-V3)
+
+*** SERVICE NAME:(SYS$USERS) 2006-10-09 12:21:15.769
+*** SESSION ID:(1853.51183) 2006-10-09 12:21:15.769
+<<<ACTIVE SESSION HISTORY - PROCESS TRACE DUMP HEADER BEGIN>>>
+DBID, INSTANCE_NUMBER, SAMPLE_ID, SAMPLE_TIME, SESSION_ID, SESSION_SERIAL#, USER_ID, SQL_ID, SQL_CHILD_NUMBER, SQL_PLAN_HASH_VALUE, SERVICE_HASH, SESSION_TYPE, SQL_OPCODE, BLOCKING_SESSION, BLOCKING_SESSION_SERIAL#, QC_SESSION_ID, QC_INSTANCE_ID, XID, CURRENT_OBJ#, CURRENT_FILE#, CURRENT_BLOCK#, EVENT_ID, SEQ#, P1, P2, P3, WAIT_TIME, TIME_WAITED, FORCE_MATCHING_SIGNATURE, PROGRAM, MODULE, ACTION, CLIENT_ID
+<<<ACTIVE SESSION HISTORY - PROCESS TRACE DUMP HEADER END>>>
+<<<ACTIVE SESSION HISTORY - PROCESS TRACE DUMP BEGIN>>>
+****************************************************************************************
+/u02/app/oracle/admin/STMAIL/udump/stmail3_ora_31793.trc
+Oracle Database 10g Enterprise Edition Release 10.2.0.1.0 - Production
+With the Partitioning, Real Application Clusters, OLAP and Data Mining options
+ORACLE_HOME = /u01/app/oracle/product/ocsdb10gR2
+System name:	Linux
+Node name:	rgmdbs307
+Release:	2.4.21-27.0.2.1.7.ELhugemem
+Version:	#1 SMP Mon May 16 16:27:47 PDT 2005
+Machine:	i686
+Instance name: STMAIL3
+Redo thread mounted by this instance: 3
+Oracle process number: 272
+Unix process pid: 31793, image: oracle@rgmdbs307 (TNS V1-V3)
+
+*** 2006-10-09 12:21:38.422
+*** SERVICE NAME:(SYS$USERS) 2006-10-09 12:21:38.421
+*** SESSION ID:(1695.644) 2006-10-09 12:21:38.421
+<<<ACTIVE SESSION HISTORY - PROCESS TRACE DUMP HEADER BEGIN>>>
+DBID, INSTANCE_NUMBER, SAMPLE_ID, SAMPLE_TIME, SESSION_ID, SESSION_SERIAL#, USER_ID, SQL_ID, SQL_CHILD_NUMBER, SQL_PLAN_HASH_VALUE, SERVICE_HASH, SESSION_TYPE, SQL_OPCODE, BLOCKING_SESSION, BLOCKING_SESSION_SERIAL#, QC_SESSION_ID, QC_INSTANCE_ID, XID, CURRENT_OBJ#, CURRENT_FILE#, CURRENT_BLOCK#, EVENT_ID, SEQ#, P1, P2, P3, WAIT_TIME, TIME_WAITED, FORCE_MATCHING_SIGNATURE, PROGRAM, MODULE, ACTION, CLIENT_ID
+<<<ACTIVE SESSION HISTORY - PROCESS TRACE DUMP HEADER END>>>
+<<<ACTIVE SESSION HISTORY - PROCESS TRACE DUMP BEGIN>>>
+******************************************************************************
+/u02/app/oracle/admin/STMAIL/udump/stmail4_ora_32424.trc
+Oracle Database 10g Enterprise Edition Release 10.2.0.1.0 - Production
+With the Partitioning, Real Application Clusters, OLAP and Data Mining options
+ORACLE_HOME = /u01/app/oracle/product/ocsdb10gR2
+System name:	Linux
+Node name:	rgmdbs308
+Release:	2.4.21-27.0.2.1.7.ELhugemem
+Version:	#1 SMP Mon May 16 16:27:47 PDT 2005
+Machine:	i686
+Instance name: STMAIL4
+Redo thread mounted by this instance: 4
+Oracle process number: 36
+Unix process pid: 32424, image: oracle@rgmdbs308 (TNS V1-V3)
+
+*** 2006-10-09 12:21:47.914
+*** SERVICE NAME:(SYS$USERS) 2006-10-09 12:21:47.913
+*** SESSION ID:(1887.7971) 2006-10-09 12:21:47.913
+<<<ACTIVE SESSION HISTORY - PROCESS TRACE DUMP HEADER BEGIN>>>
+DBID, INSTANCE_NUMBER, SAMPLE_ID, SAMPLE_TIME, SESSION_ID, SESSION_SERIAL#, USER_ID, SQL_ID, SQL_CHILD_NUMBER, SQL_PLAN_HASH_VALUE, SERVICE_HASH, SESSION_TYPE, SQL_OPCODE, BLOCKING_SESSION, BLOCKING_SESSION_SERIAL#, QC_SESSION_ID, QC_INSTANCE_ID, XID, CURRENT_OBJ#, CURRENT_FILE#, CURRENT_BLOCK#, EVENT_ID, SEQ#, P1, P2, P3, WAIT_TIME, TIME_WAITED, FORCE_MATCHING_SIGNATURE, PROGRAM, MODULE, ACTION, CLIENT_ID
+<<<ACTIVE SESSION HISTORY - PROCESS TRACE DUMP HEADER END>>>
+<<<ACTIVE SESSION HISTORY - PROCESS TRACE DUMP BEGIN>>>
+**************************************************************************
+
