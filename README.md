@@ -1,5 +1,5 @@
 # ASHviz
-Visualization of ASH dump data using R and ggplot
+Visualizations of ASH dump data using R and ggplot
 
 Abstract: NoCOUG presentation
 
