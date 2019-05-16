@@ -1,6 +1,6 @@
 # ASHviz
 
-Data visualization investigations of ASH dump data using R and ggplot in Jupyter notebooks
+Data visualization investigations of ASH dump data using R and ggplot in Jupyter and R Markdown notebooks
 
 Repository Files:
 
