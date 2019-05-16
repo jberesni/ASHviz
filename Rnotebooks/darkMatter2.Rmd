@@ -167,8 +167,10 @@ This is exactly the point where the count-latency function derivative is equal t
 This consideration has been extremely interesting, and probably worth extending. In particular, the prospect of looking closely at events and their latencies from the ON CPU samples in ASH seems quite promising. As well there may be value for monitoring or other performance analysis use cases.
 
 ## notebook
+
 Link to this notebook on github:
-* [darkMatter2]()
+
+* [darkMatter2](https://github.com/jberesni/ASHviz/blob/master/Rnotebooks/darkMatter2.Rmd)
 
 ## references
 
