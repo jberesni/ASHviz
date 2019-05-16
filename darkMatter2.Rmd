@@ -1,0 +1,179 @@
+---
+title: "darkMatter2"
+output:
+  html_document:
+    df_print: paged
+---
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook.
+
+This notebook extends the discussion of "dark matter" in ASH by exploring a completely new source of data about event latencies that does not suffer from sampling bias toward longer latencies. This new and possibly independent source of event latency information could provide important additional insights into latency distributions during the period of the ASH dump. It may provide an interesting comparison and test of accuracy for the count estimator introduced previously.
+
+## Setup
+
+Finally stopped copy-pasting the setup, doh
+```{r}
+source("./setup.R")
+```
+
+# ASH `TIME_WAITED` and dark matter 
+
+A previous Jupyter notebook and related articles (see references below) discussed the fact that the ASH sampling mechanism is biased toward sampling longer latency events and thus event latencies in ASH cannot be treated like a random sample. Descriptive statistics like median and average over these samples do not represent unbiased estimates, and should not be used.
+
+We also saw a means whereby the event latency sampled in the ASH column `TIME_WAITED` can be combined with the sampling interval to provide an estimate of event occurrences. Aggregating these estimates over larger time intervals can give unbiased picture of the distribution of event latencies.
+
+## Sampled and estimated latency densities
+
+Recall the violin plots of probability densities over event latencies both as sampled and weighted by the event count estimator:
+```{r}
+p <- ggplot( data = Events %>% filter(TIME_WAITED < 1000001)
+            ,aes( y = log10(TIME_WAITED))
+            ) +
+    geom_violin(aes( x = "B:ESTIMATED", weight = EST_COUNT / sum(EST_COUNT))) +
+    geom_violin(aes( x = "A:SAMPLED"))
+
+p
+```
+
+Note again that the sampled density is almost entirely above 1 millisecond latency (value 3) while nearly half the estimated density is below 100 microseconds (value 2.) This large proportion of low laency events indicated by the estimate is almost invisible in the raw ASH data as they have been sampled relatively few times. This is the basis for my "dark matter" reference.   
+
+There is something about the event count estimate that I don't quite understand fully, which is that our confidence in it must decrease with the sample latency. When the latency is high, larger than the sampling interval, we are certain the count is 1 as the sampler was guaranteed to see the event and only that event. On the other hand, it seems that if the sampler happens to collect a rare 100 microsecond event, the estimate projects that it happened 10000 times, perhaps far too many. That is, a "lucky hit" by the sampler of a very low latency event could throw the estimate way off from reality. My intuition is that we should be able to draw confidence intervals around the estimated density that would reflect this. I wonder how much to believe the large pool of probability below 100 microseconds in the estimate weighted density on the right. Maybe the confidence bands are so wide at these low latencies that virtually anything is possible.
+
+# CPU samples: new dark matter?
+
+So far the event latency analysis has focused on events sampled into ASH and the final latency recorded into `TIME_WAITED` by the fix-up mechanism. However, there is another potential source of event latency information in ASH, hiding in plain sight. And, significantly, this source is seemingly independent of event sampling bias to longer latencies.
+
+# `V$SESSION.WAIT_TIME`
+`WAIT_TIME` has always been one of those problematic columns in `V$SESSION`, what to do with it? ASH samples active waits and fixes up samples with wait time in `TIME_WAITED`, but `V$SESSION` has been recording `WAIT_TIME` since well before ASH.
+
+According to the Oracle 10.2 documentation, `WAIT_TIME` is interpreted as follows:  
+
+> A nonzero value is the session's last wait time.  
+> A zero value means the session is currently waiting.
+
+So if recollection serves, DBA 1.0 used this column to identify when sessions queried from `V$SESSON` were on CPU. The actual value in `WAIT_TIME` was less important than that it was nonzero and therefore session is using CPU. The context is interactive queries against `V$` tables to diagnose performance issues, and knowing the previous event latency incurred by a session currently gobbling CPU couldn't seem less relevant. So this column always seemed rather useless.
+
+HOWEVER, now ASH exists. And `WAIT_TIME` is part of the sampled data. And sessions ON CPU are sampled. And these sessions will record (nonzero) event latencies into ASH (presumably in microseconds, like `TIME_WAITED`.)
+
+Thus it seems that every ASH row for a session ON CPU may be hiding an event latency in `WAIT_TIME`. This is super interesting and completely relevant to investigating the distribution of event latencies using an ASH dump. These values are a completely independent source of event latencies from the event samples.
+
+# Density of `log10(WAIT_TIME`)
+
+Going by the documentation, a simple filter for nonzero `WAIT_TIME` should be enough to isolate these values. Consider a violin density plot of these "hidden" latencies. We also filter out values larger than the sampling interval.
+```{r}
+p <- ggplot( data = ashDF %>% filter(WAIT_TIME > 0 & WAIT_TIME < 1000001)
+            ,aes( y = log10(WAIT_TIME))) +
+    geom_violin(aes( x = "C:CPU_WAITTIME"))
+
+p
+```
+
+Well, at first glance this density looks very different from both earlier densities. There is still the narrow "neck" at 100 microseconds (2) which is interesting given the apparent independence of this sample from the other. The vast bulk of the density is between 2 (100 microseconds) and 4 (10 milliseconds) but there is a nontrivial amount between 10 and 100 microseconds. So there are apparent similarities as well as differences with the other latency density plots.
+
+# Compare all three densities
+
+We now have the following sources for describing the distribution of wait event latencies as sampled by the ASH dump:
+
+1.  Sampled event counts - ASH fixed-up events (`TIME_WAITED > 0`) counts by latency
+2.  Estimated event counts - ASH fixed-up events weighted by the inverse latency count estimate
+3.  CPU sampled event counts - ASH ON CPU wait samples (`WAIT_TIME > 0`) counts by latency
+
+Plot them all together (with medians) for comparison:
+```{r}
+p <- ggplot( data = Events %>% filter(TIME_WAITED < 1000001)
+            ,aes( y = log10(TIME_WAITED))
+            ) +
+    geom_violin(aes( x = "B:ESTIMATED", weight = EST_COUNT / sum(EST_COUNT)), draw_quantiles = (.5)) +
+    geom_violin(aes( x = "A:SAMPLED"), draw_quantiles = (.5)) +
+    geom_violin( data = ashDF %>% filter(WAIT_TIME > 0 & WAIT_TIME < 1000001)
+            ,aes( x = "C:CPU_WAITTIME", y = log10(WAIT_TIME)), draw_quantiles = (.5))
+
+  
+p
+```
+
+Fiddle around with black and gray fill to distinguish them better:
+
+```{r}
+p <- ggplot( data = Events %>% filter(TIME_WAITED < 1000001)
+            ,aes( y = log10(TIME_WAITED))
+            ) +
+    geom_violin(aes( x = "B:ESTIMATED"
+                    ,weight = EST_COUNT / sum(EST_COUNT)
+                    ,fill = I("black")
+                    )
+                ,alpha = .5
+                ,draw_quantiles = (.5))      +
+    geom_violin(aes( x = "A:SAMPLED"
+                    )
+                   ,draw_quantiles = (.5))   +
+    geom_violin(data = ashDF %>% filter(WAIT_TIME > 0 & WAIT_TIME < 1000001)
+               ,aes( x = "C:CPU_WAITTIME"
+                    ,y = log10(WAIT_TIME)
+                    ,fill = I("grey")
+                    )
+                ,alpha = 1
+                ,draw_quantiles = (.5))
+
+  
+p
+```
+save image
+```{r}
+ggplot2::ggsave(filename = "dM2all3.png"
+                ,path = "./plots/"
+                ,device = "png")
+```
+
+### Observations
+
+It is very interesting that the density plot based on `WAIT_TIME` from ON CPU samples in ASH is almost an "average" of the two densities based on event samples from the same ASH dump. It's as if the upper portion of the sampled density was squashed down and the lowest portion of the estimated density was squeezed up into a shape that is much fatter in the middle and much more evenly dispersed than the others. Also notice the median values of the CPU and event estimated densities are quite close.
+
+The actual events registering latencies will in general be completely different, however it is possible for an event to be sampled as an event `TIME_WAITED` initially followed by a CPU sample in which it is the last event and thus recorded into `WAIT_TIME`. No reason to think this is an issue.
+
+It's also worth noting and remembering that these event latencies can include IDLE events, unlike the ASH event samples. This is one reason for only using events shorter than the sampling interval (`TIME_WAITED < 1000001`) as IDLE events can be long.
+
+# Discussion
+
+This new "dark matter" source of event latency samples is extremely interesting. There is a lot to think about and investigate, including:
+
+* what randomness properties or biases may pertain in these event latencies?
+* is other event information in the row consistent (same event?)
+* the magic millisecond
+
+## Sample randomness
+
+It seems pretty clear that that these event latencies from CPU sample `WAIT_TIME` do not suffer the same bias to longer latencies that the raw ASH samples do. The sampler has sampled a session on CPU, the duration of the last wait event for the session can have absolutely no bearing on that. 
+
+So I am tempted to think of this new dark matter as a (relatively) random sample of event latencies, perhaps much better for describing the distribution than the event sample latencies.
+
+However, it seems that there could be other forms of bias that issue from the nature of these new sample latencies. For instance, very long events may never be sampled. Or a single wait event followed by multiple seconds on CPU could be sampled multiple times. The proportion of time that sessions spend on CPU vs in wait events determines the relative volumes of events in the two streams: CPU-dominant sessions mostly sample ON CPU and into the `WAIT_TIME` stream, while WAIT-dominant sessions sample mostly into the `TIME_WAITED` stream.
+
+Thinking about it a bit more, the new dark matter are events that immediately preceded the work currently being done by an ON CPU session. Each `WAIT_TIME` represents a working session that was last held up by an event of this latency.
+
+## Event information
+
+A critical question is whether the `EVENT_ID` and `P1`, `P2`, `P3` variables in the CPU samples will match the latency in `WAIT_TIME`? It seems very likely that they do and if so that we may have random samples of event latencies by event and wait class in ASH. That is worth digging into a bit and testing / verifying. There could be new and interesting event analytics to dream up using these event latency samples, perhaps for monitoring use cases.
+
+## Magic millisecond
+
+There is something special about the value 10^3^ microseconds (1 millisecond) with respect to the count estimator function. This is the value at which the conversion from latency to estimated count of occurrences is the identity. Recall that for sampled event latencies shorter than 1 second (10^6^ microseconds) the count is estimated by:
+$$ count = \frac{10^6}{latency} $$
+For the value of 10^3^ the count-latency conversion function is 1-1 since:
+$$ 10^3 = \frac{10^6}{10^3} $$
+This is exactly the point where the count-latency function derivative is equal to -1. Not exactly sure but I think this means something like latencies near 10^3^ microseconds have about equal impact on the sampled and estimated densities.
+
+# Conclusion
+
+This consideration has been extremely interesting, and probably worth extending. In particular, the prospect of looking closely at events and their latencies from the ON CPU samples in ASH seems quite promising. As well there may be value for monitoring or other performance analysis use cases.
+
+## notebook
+Link to this notebook on github:
+* [darkMatter2]()
+
+## references
+
+These two articles are preliminary to this investigation.
+
+1. [ASHviz: Densities and dark matter](https://www.linkedin.com/pulse/ashviz-densities-dark-matter-john-beresniewicz/)  
+
+2. [ASHviz: Fiddling with violins](https://www.linkedin.com/pulse/ashviz-fiddling-violins-john-beresniewicz/)
